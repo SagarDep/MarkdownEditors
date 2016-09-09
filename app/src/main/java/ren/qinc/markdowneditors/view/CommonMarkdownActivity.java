@@ -18,10 +18,8 @@ package ren.qinc.markdowneditors.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.view.KeyEvent;
 
 import java.io.InputStream;
 
@@ -29,12 +27,12 @@ import butterknife.Bind;
 import ren.qinc.markdowneditors.R;
 import ren.qinc.markdowneditors.base.BaseToolbarActivity;
 import ren.qinc.markdowneditors.utils.Check;
-import ren.qinc.markdowneditors.utils.FileUtils;
 import ren.qinc.markdowneditors.utils.SystemUtils;
 import ren.qinc.markdowneditors.widget.MarkdownPreviewView;
 
 
 /**
+ * 通用MarkdownEditor查看器
  * Created by 沈钦赐 on 16/6/30.
  */
 public class CommonMarkdownActivity extends BaseToolbarActivity implements MarkdownPreviewView.OnLoadingFinishListener {

@@ -19,12 +19,10 @@ import rx.Subscriber;
  * Created by 沈钦赐 on 16/1/18.
  */
 public class FolderManagerPresenter extends BasePresenter<IFolderManagerView> {
-    private int currentPosition = 0;
     private Stack<String> fileStack = new Stack<>();
     private List<FileBean> files = new ArrayList<>();
     /**
      * 用来保存FileBean缓存，可以用来复制粘贴等操作
-     * The Temp.
      */
     private List<FileBean> temp;
 
@@ -62,26 +60,27 @@ public class FolderManagerPresenter extends BasePresenter<IFolderManagerView> {
         mCompositeSubscription.add(
                 mDataManager.getFileListData(currentFolder, key)
                         .subscribe(new Subscriber<List<FileBean>>() {
-                            @Override
-                            public void onCompleted() {
-                                mCompositeSubscription.remove(this);//任务完成
-                                callHideProgress(IFolderManagerView.CALL_GET_FILES);
-                            }
+                                       @Override
+                                       public void onCompleted() {
+                                           mCompositeSubscription.remove(this);//任务完成
+                                           callHideProgress(IFolderManagerView.CALL_GET_FILES);
+                                       }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                mCompositeSubscription.remove(this);//任务完成
-                                callFailure(-1, "异常", IFolderManagerView.CALL_GET_FILES);
-                            }
+                                       @Override
+                                       public void onError(Throwable e) {
+                                           mCompositeSubscription.remove(this);//任务完成
+                                           callFailure(-1, "异常", IFolderManagerView.CALL_GET_FILES);
+                                       }
 
-                            @Override
-                            public void onNext(List<FileBean> fileBeans) {
-                                files.clear();
-                                files.addAll(fileBeans);
-                                if (getMvpView() != null)
-                                    getMvpView().getFileListSuccess(fileBeans);
-                            }
-                        }));
+                                       @Override
+                                       public void onNext(List<FileBean> fileBeans) {
+                                           files.clear();
+                                           files.addAll(fileBeans);
+                                           if (getMvpView() != null)
+                                               getMvpView().getFileListSuccess(fileBeans);
+                                       }
+                                   }
+                        ));
     }
 
 
@@ -247,10 +246,10 @@ public class FolderManagerPresenter extends BasePresenter<IFolderManagerView> {
     }
 
 
-    public String currentPath(){
+    public String currentPath() {
         return fileStack.peek();
     }
-    
+
 
     //===========编辑模式相关==============
 
@@ -297,6 +296,7 @@ public class FolderManagerPresenter extends BasePresenter<IFolderManagerView> {
     private static final int EDIT_MODE_COPY_PARSE = 2;
     private static final int EDIT_MODE_CUT_PARSE = 3;
     private static final int EDIT_MODE_DELETE = 4;
+
     public int getSelectCount() {
         if (files == null) return 0;
         int i = 0;

@@ -98,9 +98,10 @@ public class EditorFragment extends BaseFragment implements IEditorFragmentView,
         mPresenter = new EditorFragmentPresenter(file);
         mPresenter.attachView(this);
 
-        //操作
+        //代码格式化或者插入操作
         mPerformEditable = new PerformEditable(mContent);
-        //监听文本改变
+
+        //撤销和恢复初始化
         mPerformEdit = new PerformEdit(mContent) {
             @Override
             protected void onTextChanged(Editable s) {
@@ -117,16 +118,14 @@ public class EditorFragment extends BaseFragment implements IEditorFragmentView,
             }
         };
 
+        //文本输入监听(用于自动输入)
         PerformInputAfter.start(mContent);
 
         //装置数据
         if (file.isFile())
             mPresenter.loadFile();
-//        mContent.setText("123456789");
-//        Editable editableText = mContent.getEditableText();
-//        editableText.append("00000");
-//        editableText.replace(0, 3, "tes");
     }
+
 
     @Override
     public void initData() {
@@ -240,15 +239,15 @@ public class EditorFragment extends BaseFragment implements IEditorFragmentView,
     private void shareMenu() {
         SystemUtils.hideSoftKeyboard(mContent);
         if (mName.getText().toString().isEmpty()) {
-            AppContext.showSnackbar(mContent,"当前标题为空");
+            AppContext.showSnackbar(mContent, "当前标题为空");
             return;
         }
         if (mContent.getText().toString().isEmpty()) {
-            AppContext.showSnackbar(mContent,"当前内容为空");
+            AppContext.showSnackbar(mContent, "当前内容为空");
             return;
         }
 
-        mPresenter.save(mName.getText().toString(),mContent.getText().toString());
+        mPresenter.save(mName.getText().toString(), mContent.getText().toString());
 
         BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
 //        builder.setTitle(R.string.bottom_sheet_title);
@@ -286,7 +285,7 @@ public class EditorFragment extends BaseFragment implements IEditorFragmentView,
         shareIntent.putExtra(Intent.EXTRA_TEXT, mContent.getText().toString());
         shareIntent.setType("text/plain");
 
-        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity(),R.style.AppTheme);
+        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity(), R.style.AppTheme);
         builder.setIntent(getActivity(), shareIntent);
         BottomSheet bottomSheet = builder.create();
         bottomSheet.show();
@@ -308,8 +307,6 @@ public class EditorFragment extends BaseFragment implements IEditorFragmentView,
     public void onReadSuccess(@NonNull String name, @NonNull String content) {
         mPerformNameEdit.setDefaultText(name.substring(0, name.lastIndexOf(".")));
         mPerformEdit.setDefaultText(content);
-        mPerformEdit.clearHistory();
-
         if (content.length() > 0) {
             //切换到预览界面
 //            RxEventBus.getInstance().send(new RxEvent(RxEvent.TYPE_SHOW_PREVIEW, mName.getText().toString(), mContent.getText().toString()));
@@ -317,10 +314,12 @@ public class EditorFragment extends BaseFragment implements IEditorFragmentView,
     }
 
     public void noSave() {
+        if (mActionSave == null) return;
         mActionSave.setIcon(R.drawable.ic_action_unsave);
     }
 
     public void saved() {
+        if (mActionSave == null) return;
         mActionSave.setIcon(R.drawable.ic_action_save);
     }
 
